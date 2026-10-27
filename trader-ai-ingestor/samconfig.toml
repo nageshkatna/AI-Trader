@@ -7,6 +7,14 @@ stack_name = "trader-ai-ingestor"
 cached = true
 parallel = true
 
+[default.local_start_api.parameters]
+docker_network = "trader-ai-ingestor_default"
+parameter_overrides = "DatabaseUrl=postgres://trader:trader@postgres:5432/ai_trader IngestApiKey=change-me"
+
+[default.local_invoke.parameters]
+docker_network = "trader-ai-ingestor_default"
+parameter_overrides = "DatabaseUrl=postgres://trader:trader@postgres:5432/ai_trader IngestApiKey=change-me"
+
 [default.deploy.parameters]
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"

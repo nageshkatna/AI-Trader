@@ -18,6 +18,7 @@ import struct
 import sys
 import csv
 from datetime import datetime, timezone
+from pathlib import Path
 
 HEADER_SIZE = 148
 RECORD_SIZE_V400 = 44
@@ -77,8 +78,8 @@ def convert(input_path: str, output_path: str) -> bool:
         raise ValueError("File is too small to be a valid .hst file.")
 
     header = read_header(data)
-    print(f"Detected: version={header['version']}, symbol='{header['symbol']}', "
-          f"period={header['period_minutes']} min, digits={header['digits']}")
+    print(f"{Path(input_path).name}: version={header['version']}, symbol={header['symbol']}, "
+          f"period={header['period_minutes']}m, digits={header['digits']}")
 
     rows_written = 0
     try:
@@ -101,6 +102,6 @@ def convert(input_path: str, output_path: str) -> bool:
                 rows_written += 1
             return True
     except Exception as e:
-        print(f"Failed to convert {input_path}: {e}")
+        print(f"Failed to convert {Path(input_path).name}: {type(e).__name__}: {e}")
         return False
         

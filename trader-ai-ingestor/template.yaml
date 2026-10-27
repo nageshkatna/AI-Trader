@@ -20,14 +20,6 @@ Globals:
         INGEST_API_KEY: !Ref IngestApiKey
         PRICE_LOOKBACK_DAYS: "7"
         NEWS_LOOKBACK_HOURS: "24"
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Target: es2022
-        Minify: true
-        Sourcemap: false
-        External:
-          - pg-native
 
 Parameters:
   DatabaseUrl:
@@ -62,6 +54,14 @@ Parameters:
 Resources:
   IngestPricesFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: es2022
+        Minify: true
+        Sourcemap: false
+        External:
+          - pg-native
     Properties:
       Handler: src/handlers/ingestPrices.handler
       Description: Pull OHLCV from yfinance / Alpha Vantage into Postgres
@@ -81,6 +81,14 @@ Resources:
 
   IngestNewsFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: es2022
+        Minify: true
+        Sourcemap: false
+        External:
+          - pg-native
     Properties:
       Handler: src/handlers/ingestNews.handler
       Description: Pull news-API articles/headlines into Postgres
@@ -93,6 +101,14 @@ Resources:
 
   IngestPushFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: es2022
+        Minify: true
+        Sourcemap: false
+        External:
+          - pg-native
     Properties:
       Handler: src/handlers/ingestPush.handler
       Description: Receive parsed MT4 .hst bars and news.dat headlines from local uploader
@@ -105,6 +121,14 @@ Resources:
 
   HealthFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: es2022
+        Minify: true
+        Sourcemap: false
+        External:
+          - pg-native
     Properties:
       Handler: src/handlers/health.handler
       Timeout: 10

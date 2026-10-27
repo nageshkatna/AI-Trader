@@ -2,11 +2,11 @@ import type { OhlcvBar } from "../types";
 
 interface ChartQuote {
   date?: Date;
-  open?: number;
-  high?: number;
-  low?: number;
-  close?: number;
-  volume?: number;
+  open?: number | null;
+  high?: number | null;
+  low?: number | null;
+  close?: number | null;
+  volume?: number | null;
 }
 
 /**
@@ -16,8 +16,8 @@ export async function fetchYahooDaily(
   symbols: string[],
   lookbackDays: number
 ): Promise<OhlcvBar[]> {
-  const YahooFinance = (await import("yahoo-finance2")).default;
-  const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
+  const yf = (await import("yahoo-finance2")).default;
+  yf.suppressNotices(["yahooSurvey"]);
 
   const period1 = new Date();
   period1.setUTCDate(period1.getUTCDate() - lookbackDays);

@@ -52,11 +52,12 @@ def fetch_hst_files() -> bool:
         for src_file in matches:
             dest_file = dest / src_file.name
             if dest_file.exists():
-                print(f"File {dest_file} already exists")
+                print(f"Skipped {src_file.name}: already exists")
                 continue
             shutil.copy2(src_file, dest_file)
-            print(f"Copied {src_file.name} -> {dest_file}")
+            print(f"Copied {src_file.name}")
             copied += 1
+        print(f"Copied {copied} of {len(matches)} file(s) to {dest}")
         return True
     except Exception as e:
         print(f"Error copying files: {e}")

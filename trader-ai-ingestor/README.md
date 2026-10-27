@@ -66,6 +66,8 @@ sam deploy --guided \
 
 Lambda must reach Postgres (VPC + SG, or a public host for early demos). Wire `DATABASE_URL` to Secrets Manager later.
 
+**TODO before deploying:** work through "TODO before deploying — secure the ingest push API" in [ai-trading-plan-v3](../project-files/ai-trading-plan-v3.md). Never deploy with `IngestApiKey=change-me`.
+
 ## Out of scope here
 
 - Local Python MT4 `.hst` / `news.dat` parser (separate uploader on the trading PC)
