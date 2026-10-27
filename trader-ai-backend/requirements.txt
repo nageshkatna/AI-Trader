@@ -1,0 +1,44 @@
+# FastAPI and web server
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.12
+
+# CORS and middleware
+python-dotenv==1.0.1
+
+# Data processing
+pandas>=2.2.0
+numpy>=2.2.6
+
+# Technical indicators
+pandas-ta>=0.4.71b0
+
+# Market data (choose based on your data source)
+yfinance==0.2.49
+
+# Database (for trade logs, backtests)
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# Validation
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Date/time
+python-dateutil==2.9.0.post0
+
+# HTTP client (for external APIs)
+httpx==0.28.1
+
+# LLM / AI (for strategy agent - choose your provider)
+openai==1.57.2
+# anthropic==0.42.0  # Uncomment if using Claude
+
+# Logging
+loguru==0.7.3
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1

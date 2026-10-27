@@ -1,0 +1,8 @@
+{
+  "version": "0",
+  "id": "local-prices-event",
+  "detail-type": "Scheduled Event",
+  "source": "aws.events",
+  "time": "2026-09-19T21:05:00Z",
+  "detail": {}
+}

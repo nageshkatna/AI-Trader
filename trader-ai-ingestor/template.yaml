@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Cloud ingestion layer — scheduled price/news pulls + local-uploader push API
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 60
+    MemorySize: 512
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        DATABASE_URL: !Ref DatabaseUrl
+        PRICE_PROVIDER: !Ref PriceProvider
+        ALPHA_VANTAGE_API_KEY: !Ref AlphaVantageApiKey
+        NEWS_API_KEY: !Ref NewsApiKey
+        NEWS_QUERY: !Ref NewsQuery
+        SYMBOLS: !Ref Symbols
+        INGEST_API_KEY: !Ref IngestApiKey
+        PRICE_LOOKBACK_DAYS: "7"
+        NEWS_LOOKBACK_HOURS: "24"
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Target: es2022
+        Minify: true
+        Sourcemap: false
+        External:
+          - pg-native
+
+Parameters:
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: Postgres connection string
+  PriceProvider:
+    Type: String
+    Default: yahoo
+    AllowedValues:
+      - yahoo
+      - alphavantage
+  AlphaVantageApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+  NewsApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+  NewsQuery:
+    Type: String
+    Default: stock market OR equities
+  Symbols:
+    Type: String
+    Default: AAPL,MSFT,GOOGL,AMZN,NVDA
+  IngestApiKey:
+    Type: String
+    NoEcho: true
+    Description: Shared secret for the local uploader push API
+
+Resources:
+  IngestPricesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/ingestPrices.handler
+      Description: Pull OHLCV from yfinance / Alpha Vantage into Postgres
+      Events:
+        DailyPrices:
+          Type: Schedule
+          Properties:
+            Schedule: cron(5 21 ? * MON-FRI *)
+            Description: Weekday close + 5 minutes UTC
+            Enabled: true
+        HourlyPrices:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+            Description: Intraday refresh
+            Enabled: false
+
+  IngestNewsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/ingestNews.handler
+      Description: Pull news-API articles/headlines into Postgres
+      Events:
+        NewsPoll:
+          Type: Schedule
+          Properties:
+            Schedule: rate(30 minutes)
+            Enabled: true
+
+  IngestPushFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/ingestPush.handler
+      Description: Receive parsed MT4 .hst bars and news.dat headlines from local uploader
+      Events:
+        PushApi:
+          Type: Api
+          Properties:
+            Path: /ingest
+            Method: post
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/health.handler
+      Timeout: 10
+      Events:
+        HealthApi:
+          Type: Api
+          Properties:
+            Path: /health
+            Method: get
+
+Outputs:
+  ApiUrl:
+    Description: Ingestion HTTP API (health + local-uploader push)
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  IngestPricesFunctionArn:
+    Value: !GetAtt IngestPricesFunction.Arn
+  IngestNewsFunctionArn:
+    Value: !GetAtt IngestNewsFunction.Arn

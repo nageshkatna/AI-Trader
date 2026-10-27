@@ -1,0 +1,9 @@
+{
+  "httpMethod": "POST",
+  "path": "/ingest",
+  "headers": {
+    "Content-Type": "application/json",
+    "x-ingest-key": "change-me"
+  },
+  "body": "{\"kind\":\"bars\",\"source\":\"mt4.hst\",\"bars\":[{\"symbol\":\"EURUSD\",\"timeframe\":\"H1\",\"ts\":\"2026-09-19T12:00:00Z\",\"open\":1.11,\"high\":1.12,\"low\":1.10,\"close\":1.115,\"volume\":1000}]}"
+}
